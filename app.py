@@ -9,6 +9,7 @@ verify_token = "TESTOWYTOKENWERYFIKUJACY"
 bot = Bot(access_token)
 NewsFeed = feedparser.parse("https://news.google.com/news/rss/?hl=pl&amp;ned=PL&amp;gl=PL")
 
+
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
     if request.method == "GET": #w pierwszej kolejnosci sprawdzamy czy zapytanie pochodzi z facebook'a
@@ -29,6 +30,7 @@ def receive_message():
                         send_message(recipient_id, response_sent_nontext)
     return "Message processed"
 
+
 # WERYFIKACJA TOKENU
 # Pobieramy token wyslany przez facebook'a i porownujemy go z tokenem wyslanym przez nas.
 # Jezeli sie pokrywaja to zezwalamy na komunikacje, jezeli nie zwracamy blad
@@ -37,6 +39,7 @@ def verify_fb_token(token_sent):
         return request.args.get("hub.challenge")
     return 'Invalid verification token'
 
+
 # WYBIERANIE RANDOMOWEJ WIADOMOSCI WYSYLANEJ DO UZYTKOWNIKA
 def get_message():
     news_number = randint(0, len(NewsFeed.entries))
@@ -44,11 +47,16 @@ def get_message():
     sample_response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
     return sample_response
 
+
 # FUNKCJA WYSYLAJACA WIADOMOSC
 # wysyla do uzytkownika wiadomosc podana w parametrze response
 def send_message(recipient_id, response):
     bot.send_text_message(recipient_id, response)
     return "Success"
+
+
+def not_important_function():
+    return print("im not that important")
 
 
 if __name__ == '__main__':
