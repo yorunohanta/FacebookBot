@@ -55,10 +55,6 @@ def send_message(recipient_id, response):
     return "Success"
 
 
-def not_important_function():
-    return print("im not that important")
-
-
 if __name__ == '__main__':
     app.run()
     
