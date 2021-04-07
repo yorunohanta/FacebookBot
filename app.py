@@ -13,6 +13,7 @@ NewsFeedPoland = feedparser.parse("https://news.google.com/rss/topics/CAAqIQgKIh
 NewsFeedWroclaw = feedparser.parse("https://news.google.com/rss/topics/CAAqHAgKIhZDQklTQ2pvSWJHOWpZV3hmZGpJb0FBUAE/sections/CAQiTkNCSVNORG9JYkc5allXeGZkakpDRUd4dlkyRnNYM1l5WDNObFkzUnBiMjV5Q2hJSUwyMHZNRGcwTldKNkNnb0lMMjB2TURnME5XSW9BQSowCAAqLAgKIiZDQklTRmpvSWJHOWpZV3hmZGpKNkNnb0lMMjB2TURnME5XSW9BQVABUAE?hl=pl&gl=PL&ceid=PL%3Apl&oc=11")
 NewsFeedWarszawa = feedparser.parse("https://news.google.com/rss/topics/CAAqHAgKIhZDQklTQ2pvSWJHOWpZV3hmZGpJb0FBUAE/sections/CAQiTkNCSVNORG9JYkc5allXeGZkakpDRUd4dlkyRnNYM1l5WDNObFkzUnBiMjV5Q2hJSUwyMHZNRGd4YlY5NkNnb0lMMjB2TURneGJWOG9BQSowCAAqLAgKIiZDQklTRmpvSWJHOWpZV3hmZGpKNkNnb0lMMjB2TURneGJWOG9BQVABUAE?hl=pl&gl=PL&ceid=PL%3Apl&oc=11")
 NewsFeedSport = feedparser.parse("https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FuQnNHZ0pRVENnQVAB?hl=pl&gl=PL&ceid=PL%3Apl&oc=11")
+KeyWords = ["Important", "World", "Poland", "Wrocław", "Warszawa", "Sport"]
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -29,28 +30,8 @@ def receive_message():
                     recipient_id = message['sender']['id'] #messenger ID, abysmy wiedzieli do kogo wyslac wiadomosc
                     if message['message'].get('text'):
                         user_message = message['message'].get('text')
-                        if user_message == "Important":
-                            news_type = NewsType(user_message)
-                            response_sent_text = LoadingNews(news_type)
-                            send_message(recipient_id, response_sent_text)
-                        elif user_message == "World":
-                            news_type = NewsType(user_message)
-                            response_sent_text = LoadingNews(news_type)
-                            send_message(recipient_id, response_sent_text)
-                        elif user_message == "Poland":
-                            news_type = NewsType(user_message)
-                            response_sent_text = LoadingNews(news_type)
-                            send_message(recipient_id, response_sent_text)
-                        elif user_message == "Wrocław":
-                            news_type = NewsType(user_message)
-                            response_sent_text = LoadingNews(news_type)
-                            send_message(recipient_id, response_sent_text)
-                        elif user_message == "Warszawa":
-                            news_type = NewsType(user_message)
-                            response_sent_text = LoadingNews(news_type)
-                            send_message(recipient_id, response_sent_text)
-                        elif user_message == "Sport":
-                            news_type = NewsType(user_message)
+                        if user_message in KeyWords:
+                            news_type = NewsTypeSwitch(user_message)
                             response_sent_text = LoadingNews(news_type)
                             send_message(recipient_id, response_sent_text)
                         else:
@@ -71,20 +52,16 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 
-def NewsType(user_message):
-    if user_message == "Important":
-        news_type = NewsFeedImportant
-    elif user_message == "World":
-        news_type = NewsFeedWorld
-    elif user_message == "Poland":
-        news_type = NewsFeedPoland
-    elif user_message == "Wrocław":
-        news_type = NewsFeedWroclaw
-    elif user_message == "Warszawa":
-        news_type = NewsFeedWarszawa
-    elif user_message == "Sport":
-        news_type = NewsFeedSport
-    return news_type
+def NewsTypeSwitch(argument):
+    switcher = {
+        "Important": NewsFeedImportant,
+        "World": NewsFeedWorld,
+        "Poland": NewsFeedPoland,
+        "Wrocław": NewsFeedWroclaw,
+        "Warszawa": NewsFeedWarszawa,
+        "Sport": NewsFeedSport
+    }
+    return switcher.get(argument)
 
 
 def LoadingNews(type):
