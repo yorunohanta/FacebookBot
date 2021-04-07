@@ -27,29 +27,37 @@ def receive_message():
             for message in messaging:
                 if message.get('message'):
                     recipient_id = message['sender']['id'] #messenger ID, abysmy wiedzieli do kogo wyslac wiadomosc
-                    if message['message'].get('text') == "Important":
-                        response_sent_text = ImportantNews()
-                        send_message(recipient_id, response_sent_text)
-                    elif message['message'].get('text') == "World":
-                        response_sent_text = WorldNews()
-                        send_message(recipient_id, response_sent_text)
-                    elif message['message'].get('text') == "Poland":
-                        response_sent_text = PolandNews()
-                        send_message(recipient_id, response_sent_text)
-                    elif message['message'].get('text') == "Wrocław":
-                        response_sent_text = WroclawNews()
-                        send_message(recipient_id, response_sent_text)
-                    elif message['message'].get('text') == "Warszawa":
-                        response_sent_text = WarszawaNews()
-                        send_message(recipient_id, response_sent_text)
-                    elif message['message'].get('text') == "Sport":
-                        response_sent_text = SportNews()
-                        send_message(recipient_id, response_sent_text)
-                    else:
-                        response_sent_text = ("Wpisz: Important, World, Poland, Wrocław, Warszawa lub Sport")
-                        send_message(recipient_id, response_sent_text)
+                    if message['message'].get('text'):
+                        user_message = message['message'].get('text')
+                        if user_message == "Important":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        elif user_message == "World":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        elif user_message == "Poland":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        elif user_message == "Wrocław":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        elif user_message == "Warszawa":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        elif user_message == "Sport":
+                            news_type = NewsType(user_message)
+                            response_sent_text = LoadingNews(news_type)
+                            send_message(recipient_id, response_sent_text)
+                        else:
+                            response_sent_text = ("Wpisz: Important, World, Poland, Wrocław, Warszawa lub Sport")
+                            send_message(recipient_id, response_sent_text)
                     if message['message'].get('attachments'): #w przypadku wiadomosci nie tekstowej
-                        response_sent_nontext = ImportantNews()
+                        response_sent_nontext = LoadingNews(NewsFeedImportant)
                         send_message(recipient_id, response_sent_nontext)
     return "Message processed"
 
@@ -63,50 +71,25 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 
-# PRZYGOTOWYWANI WIADOMOSCI Z NAJWAZNIEJSZYMI WIADOMOSCIAMI
-def ImportantNews():
-    news_number = randint(0, len(NewsFeedImportant.entries))
-    news = NewsFeedImportant.entries[news_number]
-    response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
-    return response
+def NewsType(user_message):
+    if user_message == "Important":
+        news_type = NewsFeedImportant
+    elif user_message == "World":
+        news_type = NewsFeedWorld
+    elif user_message == "Poland":
+        news_type = NewsFeedPoland
+    elif user_message == "Wrocław":
+        news_type = NewsFeedWroclaw
+    elif user_message == "Warszawa":
+        news_type = NewsFeedWarszawa
+    elif user_message == "Sport":
+        news_type = NewsFeedSport
+    return news_type
 
 
-# PRZYGOTOWYWANI WIADOMOSCI Z WIADOMOSCIAMI ZE SWIATA
-def WorldNews():
-    news_number = randint(0, len(NewsFeedWorld.entries))
-    news = NewsFeedWorld.entries[news_number]
-    response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
-    return response
-
-
-# PRZYGOTOWYWANI WIADOMOSCI Z WIADOMOSCIAMI Z POLSKI
-def PolandNews():
-    news_number = randint(0, len(NewsFeedPoland.entries))
-    news = NewsFeedPoland.entries[news_number]
-    response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
-    return response
-
-
-# PRZYGOTOWYWANI WIADOMOSCI Z WIADOMOSCIAMI Z WROCLAWIA
-def WroclawNews():
-    news_number = randint(0, len(NewsFeedWroclaw.entries))
-    news = NewsFeedWroclaw.entries[news_number]
-    response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
-    return response
-
-
-# PRZYGOTOWYWANI WIADOMOSCI Z WIADOMOSCIAMI Z WARSZAWY
-def WarszawaNews():
-    news_number = randint(0, len(NewsFeedWarszawa.entries))
-    news = NewsFeedWarszawa.entries[news_number]
-    response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
-    return response
-
-
-# PRZYGOTOWYWANI WIADOMOSCI Z WIADOMOSCIAMI SPORTOWYMI
-def SportNews():
-    news_number = randint(0, len(NewsFeedSport.entries))
-    news = NewsFeedSport.entries[news_number]
+def LoadingNews(type):
+    news_number = randint(0, len(type.entries))
+    news = type.entries[news_number]
     response = (news.published + "\n**********\n" + news.title + "\n**********\n" + news.link)
     return response
 
@@ -120,4 +103,3 @@ def send_message(recipient_id, response):
 
 if __name__ == '__main__':
     app.run()
-    
