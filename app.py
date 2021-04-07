@@ -18,16 +18,16 @@ KeyWords = ["Important", "World", "Poland", "Wrocław", "Warszawa", "Sport"]
 
 @app.route('/', methods=['GET', 'POST'])
 def receive_message():
-    if request.method == "GET": #w pierwszej kolejnosci sprawdzamy czy zapytanie pochodzi z facebook'a
+    if request.method == "GET":  # checking if the request is from facebook
         token_sent = request.args.get("hub.verify_token")
         return verify_fb_token(token_sent)
-    else: #jezeli nie funkcja GET to POST, przechodzimy do wysylania wiadomosci
-        output = request.get_json() #pobranie wiadomosci wyslanej do bota
+    else:  # if not function GET then POST
+        output = request.get_json()  # getting a message from user
         for event in output['entry']:
             messaging = event['messaging']
             for message in messaging:
                 if message.get('message'):
-                    recipient_id = message['sender']['id'] #messenger ID, abysmy wiedzieli do kogo wyslac wiadomosc
+                    recipient_id = message['sender']['id']  # messenger ID, to know where to send a respond
                     if message['message'].get('text'):
                         user_message = message['message'].get('text')
                         if user_message in KeyWords:
@@ -37,15 +37,15 @@ def receive_message():
                         else:
                             response_sent_text = ("Wpisz: Important, World, Poland, Wrocław, Warszawa lub Sport")
                             send_message(recipient_id, response_sent_text)
-                    if message['message'].get('attachments'): #w przypadku wiadomosci nie tekstowej
+                    if message['message'].get('attachments'):  # if it's not text message
                         response_sent_nontext = LoadingNews(NewsFeedImportant)
                         send_message(recipient_id, response_sent_nontext)
     return "Message processed"
 
 
-# WERYFIKACJA TOKENU
-# Pobieramy token wyslany przez facebook'a i porownujemy go z tokenem wyslanym przez nas.
-# Jezeli sie pokrywaja to zezwalamy na komunikacje, jezeli nie zwracamy blad
+# TOKEN VERIFICATION
+# Get the token from facebook and compare it with our token.
+# If they match then communication ok, if not return error.
 def verify_fb_token(token_sent):
     if token_sent == verify_token:
         return request.args.get("hub.challenge")
@@ -71,8 +71,6 @@ def LoadingNews(type):
     return response
 
 
-# FUNKCJA WYSYLAJACA WIADOMOSC
-# wysyla do uzytkownika wiadomosc podana w parametrze response
 def send_message(recipient_id, response):
     bot.send_text_message(recipient_id, response)
     return "Success"
