@@ -2,9 +2,10 @@ from random import randint
 import feedparser
 from flask import Flask, request
 from pymessenger.bot import Bot
+import os
 
 app = Flask(__name__)
-access_token = "EAAD0yY1qYlYBAPDwETtYZCLEI0LvLtcd5uO2n1HdiZCCxZCG8N29CmZAcgZBpxIUC7cblBznc625HPULMOZBOejwtSq501tJukxNZAULvvZCGAR6s2NwsaTOB86ggnAkFBKse5ZC4qfUNNBp1Ck2AYz3k7YRJ7eFRBtGXRGD5CVRJBgZDZD"
+access_token = os.environ.get('Facebook_access_token')
 verify_token = "TESTOWYTOKENWERYFIKUJACY"
 bot = Bot(access_token)
 NewsFeedImportant = feedparser.parse("https://news.google.com/news/rss/?hl=pl&amp;gl=PL&amp;ceid=PL%3Apl&amp;oc=11")
